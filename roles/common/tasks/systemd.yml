@@ -11,3 +11,4 @@
     daemon_reload: true
     enable: true
     state: restarted
+    name: "{{ component }}"
