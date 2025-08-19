@@ -1,11 +1,6 @@
 - name: Set Prompt
   ansible.builtin.shell: set-prompt github-runner
 
-- name: Add github runner user
-  ansible.builtin.user:
-    name: github-runner
-    home: /github-runner
-
 - name: Download runner software
   ansible.builtin.unarchive:
     src: https://github.com/actions/runner/releases/download/v{{ runner_version }}/actions-runner-linux-x64-{{ runner_version }}.tar.gz
