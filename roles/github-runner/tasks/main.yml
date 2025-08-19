@@ -73,6 +73,7 @@
 
 - name: Install App Packages
   ansible.builtin.dnf:
+    name:
     - nodejs
     - maven
 
