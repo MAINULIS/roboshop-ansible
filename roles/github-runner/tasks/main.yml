@@ -28,6 +28,22 @@
     home: /github-runner
     groups: docker
 
+- name: Login to ECR
+  ansible.builtin.shell: |
+    /usr/local/bin/aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
+
+- name: Runner Container
+  community.docker.docker_container:
+    name: Runner1
+    image: 804756348441.dkr.ecr.us-east-1.amazonaws.com/runner
+    state: present
+    recreate: true
+    env:
+      NAME: runner1
+      TOKEN: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=roboshop-infra/data/github-runner:RUNNER_TOKEN token={{ vault_token }} url={{ vault_url }}') }}"
+      ORG: "https://github.com/MyDevOpsLearning01"
+
+
 ## The things of below we moved inside a container.
 #
 #- name: Download runner software
@@ -110,3 +126,7 @@
 #- name: Install Helm
 #  ansible.builtin.shell: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 #
+#- name: HVAC python module
+#  ansible.builtin.pip:
+#    name: hvac
+#    executable: pip3.11
