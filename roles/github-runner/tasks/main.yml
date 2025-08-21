@@ -34,12 +34,12 @@
 
 - name: Runner Container
   community.docker.docker_container:
-    name: {{ item }}
+    name: "{{ item }}"
     image: 804756348441.dkr.ecr.us-east-1.amazonaws.com/runner
     state: started
     recreate: true
     env:
-      NAME: {{ item }}
+      NAME: "{{ item }}"
       TOKEN: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=roboshop-infra/data/github-runner:RUNNER_TOKEN token={{ vault_token }} url={{ vault_url }}') }}"
       ORG: "https://github.com/MyDevOpsLearning01"
     loop:
