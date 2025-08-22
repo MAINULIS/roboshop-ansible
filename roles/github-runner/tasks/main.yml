@@ -22,9 +22,6 @@
     - name: Set Prompt
       ansible.builtin.shell: set-prompt github-runner
 
-    - name: Set Prompt
-      ansible.builtin.shell: set-prompt github-runner
-
     - name: Load common lvm
       ansible.builtin.import_role:
         name: common
