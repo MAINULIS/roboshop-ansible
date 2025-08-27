@@ -17,7 +17,7 @@
     - runner2
     - runner3
   register: out
-#  ignore_errors: yes
+  ignore_errors: yes
 
 - name: Run from Scratch
   when: out.failed is defined
@@ -169,3 +169,4 @@
 #    name: hvac
 #    executable: pip3.11
 # test
+#test
