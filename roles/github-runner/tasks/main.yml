@@ -61,22 +61,36 @@
 #    - name: Login to ECR
 #      ansible.builtin.shell: |
 #        /usr/local/bin/aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
-#      register: ecr_login
-#      changed_when: "'Login Succeeded' in ecr_login.stdout"
-    - name: Login to AWS ECR
+#
+#    - name: Runner Container
+#      community.docker.docker_container:
+#        name: "{{ item }}"
+#        image: 804756348441.dkr.ecr.us-east-1.amazonaws.com/runner
+#        state: started
+#        recreate: true
+#        pull: always
+#        restart_policy: always
+#        volumes:
+#          - /var/run/docker.sock:/var/run/docker.sock
+#        env:
+#          NAME: "{{ item }}"
+#          TOKEN: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=roboshop-infra/data/github-runner:RUNNER_TOKEN token={{ vault_token }} url={{ vault_url }}') }}"
+#          ORG: "https://github.com/MyDevOpsLearning01"
+#      loop:
+#        - runner1
+#        - runner2
+#        - runner3
+
+    - name: Login to ECR as github-runner
       ansible.builtin.shell: |
-        mkdir -p /home/ec2-user/.docker
-        aws ecr get-login-password --region us-east-1 \
-          | docker --config /home/ec2-user/.docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
+        mkdir -p /github-runner/.docker
+        /usr/local/bin/aws ecr get-login-password --region us-east-1 \
+          | docker --config /github-runner/.docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
+      become: true
+      become_user: github-runner
       register: ecr_login
       changed_when: "'Login Succeeded' in ecr_login.stdout or 'Login Succeeded' in ecr_login.stderr"
       failed_when: ecr_login.rc != 0
-
-    - name: Pull runner image
-      ansible.builtin.shell: |
-        docker --config /home/ec2-user/.docker pull 804756348441.dkr.ecr.us-east-1.amazonaws.com/runner:latest
-
-
 
     - name: Runner Container
       community.docker.docker_container:
@@ -92,10 +106,14 @@
           NAME: "{{ item }}"
           TOKEN: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=roboshop-infra/data/github-runner:RUNNER_TOKEN token={{ vault_token }} url={{ vault_url }}') }}"
           ORG: "https://github.com/MyDevOpsLearning01"
+        docker_host: "unix:///var/run/docker.sock"
+        docker_cli_options: "--config /github-runner/.docker"
       loop:
         - runner1
         - runner2
         - runner3
+      become: true
+      become_user: github-runner
 
 
 ## The things of below we moved inside a container.
