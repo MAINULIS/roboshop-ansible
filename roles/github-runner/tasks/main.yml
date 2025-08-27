@@ -63,19 +63,14 @@
 #        /usr/local/bin/aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
 #      register: ecr_login
 #      changed_when: "'Login Succeeded' in ecr_login.stdout"
-    - name: Login to AWS ECR
+    - name: Login to AWS ECR as ec2-user
       ansible.builtin.shell: |
-        set -o pipefail
         aws ecr get-login-password --region us-east-1 \
           | docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
       register: ecr_login
-      changed_when: "'Login Succeeded' in ecr_login.stdout or 'Login Succeeded' in ecr_login.stderr"
+      changed_when: "'Login Succeeded' in ecr_login.stdout"
       failed_when: ecr_login.rc != 0
 
-    - name: Pull runner image
-      community.docker.docker_image:
-        name: 804756348441.dkr.ecr.us-east-1.amazonaws.com/runner:latest
-        source: pull
 
     - name: Runner Container
       community.docker.docker_container:
