@@ -64,6 +64,7 @@
 #      register: ecr_login
 #      changed_when: "'Login Succeeded' in ecr_login.stdout"
     - name: Login to AWS ECR
+      become: true
       ansible.builtin.shell: |
         set -o pipefail
         aws ecr get-login-password --region us-east-1 \
@@ -71,7 +72,6 @@
       register: ecr_login
       changed_when: "'Login Succeeded' in ecr_login.stdout or 'Login Succeeded' in ecr_login.stderr"
       failed_when: ecr_login.rc != 0
-
 
     - name: Runner Container
       community.docker.docker_container:
