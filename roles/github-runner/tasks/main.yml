@@ -58,20 +58,25 @@
         home: /github-runner
         groups: docker
 
-#    - name: Login to ECR
-#      ansible.builtin.shell: |
-#        /usr/local/bin/aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
-#      register: ecr_login
-#      changed_when: "'Login Succeeded' in ecr_login.stdout"
-    - name: Login to AWS ECR
-      become: true
+    - name: Login to ECR
       ansible.builtin.shell: |
-        set -o pipefail
-        aws ecr get-login-password --region us-east-1 \
-          | docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
+        /usr/local/bin/aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
       register: ecr_login
-      changed_when: "'Login Succeeded' in ecr_login.stdout or 'Login Succeeded' in ecr_login.stderr"
-      failed_when: ecr_login.rc != 0
+      changed_when: "'Login Succeeded' in ecr_login.stdout"
+#    - name: Login to AWS ECR
+#      ansible.builtin.shell: |
+#        set -o pipefail
+#        aws ecr get-login-password --region us-east-1 \
+#          | docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
+#      register: ecr_login
+#      changed_when: "'Login Succeeded' in ecr_login.stdout or 'Login Succeeded' in ecr_login.stderr"
+#      failed_when: ecr_login.rc != 0
+#
+#    - name: Pull runner image
+#      become: true
+#      community.docker.docker_image:
+#        name: 804756348441.dkr.ecr.us-east-1.amazonaws.com/runner:latest
+#        source: pull
 
     - name: Runner Container
       community.docker.docker_container:
