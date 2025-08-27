@@ -10,7 +10,7 @@
       - /var/run/docker.sock:/var/run/docker.sock
     env:
       NAME: "{{ item }}"
-      TOKEN: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=roboshop-infra/data/github-runner:RUNNER_TOKEN token={{ vault_token }} url={{ vault_url }}') }}"
+      TOKEN: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=roboshop-infra/data/github-runner:RUNNER_TOKEN token=A5EUR4I6FE36SGGHD26IG23IV3N4O url={{ vault_url }}') }}"
       ORG: "https://github.com/MyDevOpsLearning01"
   loop:
     - runner1
