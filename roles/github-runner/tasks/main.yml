@@ -10,7 +10,7 @@
       - /var/run/docker.sock:/var/run/docker.sock
     env:
       NAME: "{{ item }}"
-      TOKEN: A5EUR4I6FE36SGGHD26IG23IV3N4O
+      TOKEN: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=roboshop-infra/data/github-runner:RUNNER_TOKEN token={{ vault_token }} url={{ vault_url }}') }}"
       ORG: "https://github.com/MyDevOpsLearning01"
   loop:
     - runner1
@@ -168,3 +168,4 @@
 #  ansible.builtin.pip:
 #    name: hvac
 #    executable: pip3.11
+# test
