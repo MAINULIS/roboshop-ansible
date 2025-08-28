@@ -61,13 +61,25 @@
 #    - name: Login to ECR
 #      ansible.builtin.shell: |
 #        /usr/local/bin/aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
-    - name: Login to AWS ECR
-      ansible.builtin.shell: |
-        aws ecr get-login-password --region us-east-1 \
-          | docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
-      args:
-        executable: /bin/bash
-      become: false   # run as ec2-user
+    - hosts: github-runner-internal.maidevops.fun
+      become: true
+      vars:
+        aws_region: "us-east-1"
+        aws_account_id: "804756348441"
+        ecr_repo: "runner"
+        ecr_image: "{{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com/{{ ecr_repo }}:latest"
+
+      tasks:
+        - name: Ensure amazon.aws collection is installed
+          ansible.builtin.meta: require_collection
+          collections:
+            - amazon.aws
+
+        - name: Authenticate Docker to ECR
+          amazon.aws.ecr_login:
+            region: "{{ aws_region }}"
+            registry_ids: [ "{{ aws_account_id }}" ]
+
 
     - name: Runner Container
       community.docker.docker_container:
