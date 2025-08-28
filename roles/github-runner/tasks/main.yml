@@ -58,20 +58,9 @@
         home: /github-runner
         groups: docker
 
-#    - name: Login to ECR
-#      ansible.builtin.shell: |
-#        /usr/local/bin/aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
-    - name: Ensure ec2-user is in docker group
-      ansible.builtin.user:
-        name: ec2-user
-        groups: docker
-        append: yes
-
-    - name: Login to AWS ECR as ec2-user
+    - name: Login to ECR
       ansible.builtin.shell: |
-        aws ecr get-login-password --region us-east-1 \
-          | docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
-      become: false   # run as ec2-user (uses its IAM role/credentials)
+        /usr/local/bin/aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
 
     - name: Runner Container
       community.docker.docker_container:
@@ -179,3 +168,4 @@
 #  ansible.builtin.pip:
 #    name: hvac
 #    executable: pip3.11
+# checking
