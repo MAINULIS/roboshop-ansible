@@ -61,12 +61,12 @@
 #    - name: Login to ECR
 #      ansible.builtin.shell: |
 #        /usr/local/bin/aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
-    - name: Login to ECR
+    - name: Login to ECR on target host
       ansible.builtin.shell: |
         aws ecr get-login-password --region us-east-1 \
           | docker login --username AWS --password-stdin 804756348441.dkr.ecr.us-east-1.amazonaws.com
-      become: true
-      become_user: root
+      become: false   # run as ec2-user, not root
+
 
 
     - name: Runner Container
