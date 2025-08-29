@@ -42,7 +42,7 @@
 
     - name: Copy Docker service file
       ansible.builtin.template:
-        name: docker.service
+        src: docker.service
         dest: /etc/systemd/system/multi-user.target.wants/docker.service
 
     - name: Start Docker
